@@ -14,18 +14,17 @@ import android.graphics.Rect;
 import android.graphics.Region;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
-/**
- * Author       wildma
- * Github       https://github.com/wildma
- * Date         2018/6/24
- * Desc	        ${裁剪区域布局}
+ 
+/** Clase encargada de crear la capa que cubre a la imagen para recortarla
+ * agrega puntos de referencia para realizar el recorte
+ * brinda la opcion de aceptar o negar el recorte de la imagen para posteriormente utilizarla
  */
+
 public class CropOverlayView extends View {
 
+  // region: Fields and Consts
     private int defaultMargin = 100;
     private int minDistance = 100;
     private int vertexSize = 30;
@@ -41,7 +40,10 @@ public class CropOverlayView extends View {
     private int currentHeight = 0;
 
     private int minX, maxX, minY, maxY;
-
+// endregion
+    /**Constructores del CropOverlayView
+     * Utilice getContext ()
+     * */
     public CropOverlayView(Context context) {
         super(context);
     }
@@ -50,49 +52,55 @@ public class CropOverlayView extends View {
         super(context, attrs);
     }
 
+    /**Metodo para asignar el bitmap (foto capturada) al overlay
+     * y resetear los puntos de referencia
+     * Invocar al metodo invalidate() de View para repintar la pantalla */
+
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
         resetPoints();
         invalidate();
     }
 
+    /** Metodo para dibujar el fondo difuminado
+     * los vertices, las lineas y la cuadricula de referencia para recortar la imagen
+     * */
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
+        //obtener las medidas actuales
         if (getWidth() != currentWidth || getHeight() != currentHeight) {
             currentWidth = getWidth();
             currentHeight = getHeight();
             resetPoints();
         }
-        Log.e("stk", "canvasSize=" + getWidth() + "x" + getHeight());
-
-        drawBackground(canvas);
-        drawVertex(canvas);
-        drawEdge(canvas);
-//        drawGrid(canvas);//裁剪框内部线条
+        drawBackground(canvas); //Dibujar el fondo difuminado
+        drawVertex(canvas);     //Dibujar los vertices en el canva
+        drawEdge(canvas);       //Dibujar las lineas que unen los vertices
+        drawGrid(canvas);       //Dibujar una cuadricula de referencia
     }
 
+    /**Metodo para resetear los puntos de referencia para realizar el recorte de la
+     * imagen
+     * */
     private void resetPoints() {
 
-        Log.e("stk", "resetPoints, bitmap=" + bitmap);
-
-        // 1. calculate bitmap size in new canvas
+        // 1. calcular el tamaño del mapa de bits (la fotografia) en un nuevo canva
         float scaleX = bitmap.getWidth() * 1.0f / getWidth();
         float scaleY = bitmap.getHeight() * 1.0f / getHeight();
         float maxScale = Math.max(scaleX, scaleY);
 
-        // 2. determine minX , maxX if maxScale = scaleY | minY, maxY if maxScale = scaleX
+        // 2. determinar si la fotografia es muy larga o ancha
         int minX = 0;
         int maxX = getWidth();
         int minY = 0;
         int maxY = getHeight();
 
-        if (maxScale == scaleY) { // image very tall
+        if (maxScale == scaleY) { // fotografia muy alta
             int bitmapInCanvasWidth = (int) (bitmap.getWidth() / maxScale);
             minX = (getWidth() - bitmapInCanvasWidth) / 2;
             maxX = getWidth() - minX;
-        } else { // image very wide
+        } else { // fotografia muy ancha
             int bitmapInCanvasHeight = (int) (bitmap.getHeight() / maxScale);
             minY = (getHeight() - bitmapInCanvasHeight)/2;
             maxY = getHeight() - minY;
@@ -104,24 +112,29 @@ public class CropOverlayView extends View {
         this.maxY = maxY;
 
         if (maxX - minX < defaultMargin || maxY - minY < defaultMargin)
-            defaultMargin = 0; // remove min
+            defaultMargin = 0; // remover el minimo
         else
             defaultMargin = 30;
 
-        Log.e("stk", "maxX - minX=" + (maxX - minX));
-        Log.e("stk", "maxY - minY=" + (maxY - minY));
-
+/**Dibujar los 4 nuevos puntos segun el calculo
+ * agregandole un margen de 100
+ * */
         topLeft = new Point(minX + defaultMargin, minY + defaultMargin);
         topRight = new Point(maxX - defaultMargin, minY + defaultMargin);
         bottomLeft = new Point(minX + defaultMargin, maxY - defaultMargin);
         bottomRight = new Point(maxX - defaultMargin, maxY - defaultMargin);
     }
 
+    /**Se llama para determinar los requisitos de tamaño para esta vista
+     * */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
-
+    /** Metodo que ayuda a dibujar el fondo difuminado de color gris
+     * ayuda a dar un mejor encuadre de la credencial y asi obtener
+     * una mejor fotografia
+     * */
     private void drawBackground(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.parseColor("#66000000"));
@@ -140,6 +153,9 @@ public class CropOverlayView extends View {
         canvas.restore();
     }
 
+    /** Metodo para dibujar puntos en los vertices del rectangulo
+     * ayuda a tomarlos como puntos de referencia al recortar la imagen
+     * */
     private void drawVertex(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.WHITE);
@@ -150,11 +166,13 @@ public class CropOverlayView extends View {
         canvas.drawCircle(bottomLeft.x, bottomLeft.y, vertexSize, paint);
         canvas.drawCircle(bottomRight.x, bottomRight.y, vertexSize, paint);
 
-        Log.e("stk",
-                "vertextPoints=" +
-                topLeft.toString() + " " + topRight.toString() + " " + bottomRight.toString() + " " + bottomLeft.toString());
 
     }
+
+    /**Metodo que ayuda a unir los vertices con una linea entre ellos
+     *
+     */
+
     private void drawEdge(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.WHITE);
@@ -166,7 +184,9 @@ public class CropOverlayView extends View {
         canvas.drawLine(bottomRight.x, bottomRight.y, topRight.x, topRight.y, paint);
         canvas.drawLine(bottomRight.x, bottomRight.y, bottomLeft.x, bottomLeft.y, paint);
     }
-
+    /**Metodo que ayuda a crear una cuadricula entre los vertices de ayuda
+     * se crea una cuadricula de 4x4
+     * */
     private void drawGrid(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.WHITE);
@@ -208,6 +228,7 @@ public class CropOverlayView extends View {
 
     }
 
+    /**Metodo de View para capturar los eventos en el touch */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
@@ -246,6 +267,7 @@ public class CropOverlayView extends View {
         }
     }
 
+    /**Obtener la distancia entre dos puntos*/
     private int distance(Point src, Point dst) {
         return (int) Math.sqrt(Math.pow(src.x - dst.x, 2) + Math.pow(src.y - dst.y, 2));
     }
@@ -324,33 +346,31 @@ public class CropOverlayView extends View {
         bottomRight.set(newX, newY);
     }
 
+    /** Metodo que se encarga de realizar el recorte de la fotografia
+     * tomando como parametros los puntos de referencia de la seleccion previa
+     * creando un nuevo bitmap "stretch" el cual se le envia como onFinish al croplistener
+     * */
     public void crop(CropListener cropListener, boolean needStretch) {
         if (topLeft == null) return;
 
-        // calculate bitmap size in new canvas
+        // calcular el tamañano del bitmap en un nuevo canvas
         float scaleX = bitmap.getWidth() * 1.0f / getWidth();
         float scaleY = bitmap.getHeight() * 1.0f / getHeight();
         float maxScale = Math.max(scaleX, scaleY);
 
-        // re-calculate coordinate in original bitmap
-        Log.e("stk", "maxScale=" + maxScale);
+        // volver a calcular las coordenadas en el mapa de bits original
 
         Point bitmapTopLeft = new Point((int) ((topLeft.x - minX) * maxScale), (int) ((topLeft.y - minY) * maxScale));
         Point bitmapTopRight = new Point((int) ((topRight.x - minX) * maxScale), (int) ((topRight.y - minY) * maxScale));
         Point bitmapBottomLeft = new Point((int) ((bottomLeft.x - minX) * maxScale), (int) ((bottomLeft.y - minY) * maxScale));
         Point bitmapBottomRight = new Point((int) ((bottomRight.x - minX) * maxScale), (int) ((bottomRight.y - minY) * maxScale));
 
-        Log.e("stk", "bitmapPoints="
-                + bitmapTopLeft.toString() + " "
-                + bitmapTopRight.toString() + " "
-                + bitmapBottomRight.toString() + " "
-                + bitmapBottomLeft.toString() + " ");
 
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth()+1, bitmap.getHeight()+1, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
         Paint paint = new Paint();
-        // 1. draw path
+
         Path path = new Path();
         path.moveTo(bitmapTopLeft.x, bitmapTopLeft.y);
         path.lineTo(bitmapTopRight.x, bitmapTopRight.y);
@@ -359,11 +379,9 @@ public class CropOverlayView extends View {
         path.close();
         canvas.drawPath(path, paint);
 
-        // 2. draw original bitmap
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, 0, 0, paint);
 
-        // 3. cut
         Rect cropRect = new Rect(
                 Math.min(bitmapTopLeft.x, bitmapBottomLeft.x),
                 Math.min(bitmapTopLeft.y, bitmapTopRight.y),
@@ -385,7 +403,6 @@ public class CropOverlayView extends View {
         if (!needStretch) {
             cropListener.onFinish(cut);
         } else {
-            // 4. re-calculate coordinate in cropRect
             Point cutTopLeft = new Point();
             Point cutTopRight = new Point();
             Point cutBottomLeft = new Point();
@@ -403,13 +420,7 @@ public class CropOverlayView extends View {
             cutBottomRight.x = bitmapTopRight.x > bitmapBottomRight.x ? cropRect.width() - Math.abs(bitmapBottomRight.x - bitmapTopRight.x) : cropRect.width();
             cutBottomRight.y = bitmapBottomLeft.y > bitmapBottomRight.y ? cropRect.height() - Math.abs(bitmapBottomRight.y - bitmapBottomLeft.y) : cropRect.height();
 
-            Log.e("stk", cut.getWidth() + "x" + cut.getHeight());
 
-            Log.e("stk", "cutPoints="
-                        + cutTopLeft.toString() + " "
-                        + cutTopRight.toString() + " "
-                        + cutBottomRight.toString() + " "
-                        + cutBottomLeft.toString() + " ");
 
             float width = cut.getWidth();
             float height = cut.getHeight();

@@ -13,12 +13,18 @@ import android.widget.ImageView;
 
 import com.wildma.idcardcamera.R;
 
- 
+/** Clase encargada de contener la fotografia capturada para realizar su recorte
+    Extiende de FrameLayout para apilar las vistas secundarias una encima de la otra.
+ */
 public class CropImageView extends FrameLayout {
 
     private ImageView       mImageView;
     private CropOverlayView mCropOverlayView;
 
+/** Contructores inflando el contexto y obteniendo del layout la vista 
+    junto con las componentes imagenview y cropoverlayview
+    Utilice getContext ()
+ */
     public CropImageView(@NonNull Context context) {
         super(context);
     }
@@ -36,11 +42,13 @@ public class CropImageView extends FrameLayout {
         super.onDraw(canvas);
     }
 
+/** Se establece el bitmap de la fotografia a ambos elementos */
     public void setImageBitmap(Bitmap bitmap) {
         mImageView.setImageBitmap(bitmap);
         mCropOverlayView.setBitmap(bitmap);
     }
 
+/** Asignacion de un CropListener para escuchar la actividad de la pantalla */
     public void crop(CropListener listener, boolean needStretch) {
         if (listener == null)
             return;
