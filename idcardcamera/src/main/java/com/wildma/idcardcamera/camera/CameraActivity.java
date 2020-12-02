@@ -2,11 +2,14 @@ package com.wildma.idcardcamera.camera;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 import com.wildma.idcardcamera.R;
 import com.wildma.idcardcamera.cropper.CropImageView;
 import com.wildma.idcardcamera.cropper.CropListener;
+import com.wildma.idcardcamera.sensor.BubbleLevel;
 import com.wildma.idcardcamera.utils.CommonUtils;
 import com.wildma.idcardcamera.utils.FileUtils;
 import com.wildma.idcardcamera.utils.ImageUtils;
@@ -46,6 +50,11 @@ public class CameraActivity extends Activity implements View.OnClickListener {
 
     private int     mType;
     private boolean isToast = true;
+
+
+    BubbleLevel bubbleLevel;
+    SensorManager sensorManager;
+    Sensor sensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +118,10 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         mFlCameraOption = (FrameLayout) findViewById(R.id.fl_camera_option);
         mViewCameraCropLeft = findViewById(R.id.view_camera_crop_left);
 
+
+
+
+
         float screenMinSize = Math.min(ScreenUtils.getScreenWidth(this), ScreenUtils.getScreenHeight(this));
         float screenMaxSize = Math.max(ScreenUtils.getScreenWidth(this), ScreenUtils.getScreenHeight(this));
         float height = (int) (screenMinSize * 0.75);
@@ -151,6 +164,10 @@ public class CameraActivity extends Activity implements View.OnClickListener {
                 });
             }
         }, 500);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        bubbleLevel = new BubbleLevel(sensorManager, sensor,this);
+
     }
 
     private void initListener() {
