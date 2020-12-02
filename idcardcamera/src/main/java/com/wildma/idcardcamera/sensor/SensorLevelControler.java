@@ -57,9 +57,7 @@ public class SensorLevelControler implements SensorEventListener{
         } else {
             Log.i(TAG, "Camera no stable");
             enablePhoto = false;
-            tonePlayed = false;
            // userMessage.setBackgroundColor(Color.RED);
-
             if (thetaY > 0) {
                // userMessage.setText(R.string.phone_up);
             } else {

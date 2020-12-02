@@ -113,10 +113,6 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         mFlCameraOption = (FrameLayout) findViewById(R.id.fl_camera_option);
         mViewCameraCropLeft = findViewById(R.id.view_camera_crop_left);
 
-
-
-
-
         float screenMinSize = Math.min(ScreenUtils.getScreenWidth(this), ScreenUtils.getScreenHeight(this));
         float screenMaxSize = Math.max(ScreenUtils.getScreenWidth(this), ScreenUtils.getScreenHeight(this));
         float height = (int) (screenMinSize * 0.75);
