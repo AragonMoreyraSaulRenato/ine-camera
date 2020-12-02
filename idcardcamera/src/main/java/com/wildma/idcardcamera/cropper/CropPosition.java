@@ -1,11 +1,13 @@
 package com.wildma.idcardcamera.cropper;
 
 /**
- * Author       wildma
- * Github       https://github.com/wildma
- * Date         2018/6/24
- * Desc	        ${裁剪位置}
- */
+ * Clase para guardar grupo de constantes del Crop
+ * arriba izquierda
+ * arriba derecha
+ * abajo izquierda
+ * abajo derecha
+ * */
+
 public enum CropPosition {
     TOP_LEFT,
     TOP_RIGHT,
