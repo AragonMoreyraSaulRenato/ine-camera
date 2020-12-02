@@ -4,45 +4,40 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 
-/**
- * Author       wildma
- * Github       https://github.com/wildma
- * Date         2018/6/24
- * Desc	        ${相机工具类}
- */
 public class CameraUtils {
 
     private static Camera camera;
 
     /**
-     * 检查是否有相机
+     *
+     * Comprueba si hay cámara
      *
      * @param context
      * @return
      */
     public static boolean hasCamera(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            // this device has a camera
+            // Este dispositivo tiene una camara
             return true;
         } else {
-            // no camera on this device
+            // No hay una camara
             return false;
         }
     }
 
     /**
-     * 打开相机
+     * Encienda la camara
      *
      * @return
      */
     public static Camera openCamera() {
         camera = null;
         try {
-            camera = Camera.open(); // attempt to get a Camera instance
+            camera = Camera.open(); // Obtiene la instancia de la camara
         } catch (Exception e) {
-            // Camera is not available (in use or does not exist)
+            // Camara no disponible
         }
-        return camera; // returns null if camera is unavailable
+        return camera; // retorna null si la camara no esta disponible
     }
 
     public static Camera getCamera() {
@@ -50,9 +45,9 @@ public class CameraUtils {
     }
 
     /**
-     * 检查是否有闪光灯
+     * Compruebe si hay flash
      *
-     * @return true：有，false：无
+     * @return true：hay，false：no
      */
     public static boolean hasFlash(Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);

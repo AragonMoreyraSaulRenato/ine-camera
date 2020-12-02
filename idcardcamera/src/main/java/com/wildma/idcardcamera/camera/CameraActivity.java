@@ -30,13 +30,6 @@ import com.wildma.idcardcamera.utils.ScreenUtils;
 
 import java.io.File;
 
-
-/**
- * Author       wildma
- * Github       https://github.com/wildma
- * Date         2018/6/24
- * Desc	        ${拍照界面}
- */
 public class CameraActivity extends Activity implements View.OnClickListener {
 
     private CropImageView mCropImageView;
@@ -51,14 +44,13 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     private FrameLayout   mFlCameraOption;
     private View          mViewCameraCropLeft;
 
-    private int     mType;//拍摄类型
-    private boolean isToast = true;//是否弹吐司，为了保证for循环只弹一次
+    private int     mType;
+    private boolean isToast = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*动态请求需要的权限*/
         boolean checkPermissionFirst = PermissionUtils.checkPermissionFirst(this, IDCardCamera.PERMISSION_CODE_FIRST,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA});
         if (checkPermissionFirst) {
@@ -67,11 +59,10 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * 处理请求权限的响应
      *
-     * @param requestCode  请求码
-     * @param permissions  权限数组
-     * @param grantResults 请求权限结果数组
+     * @param requestCode  Codigo de solicitud
+     * @param permissions  Premisos
+     * @param grantResults Solicitar matriz de resultados de permiso
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -80,9 +71,9 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         for (int i = 0; i < permissions.length; i++) {
             if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                 isPermissions = false;
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) { //用户选择了"不再询问"
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) { //El usuario seleccionó "No volver a preguntar"
                     if (isToast) {
-                        Toast.makeText(this, "请手动打开该应用需要的权限", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Abra manualmente los permisos necesarios en la aplicacion", Toast.LENGTH_SHORT).show();
                         isToast = false;
                     }
                 }
@@ -90,10 +81,10 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         }
         isToast = true;
         if (isPermissions) {
-            Log.d("onRequestPermission", "onRequestPermissionsResult: " + "允许所有权限");
+            Log.d("onRequestPermission", "onRequestPermissionsResult: " + "Permitir todos los permisos");
             init();
         } else {
-            Log.d("onRequestPermission", "onRequestPermissionsResult: " + "有权限不允许");
+            Log.d("onRequestPermission", "onRequestPermissionsResult: " + "Permiso no permitido");
             finish();
         }
     }
@@ -122,14 +113,17 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         float screenMaxSize = Math.max(ScreenUtils.getScreenWidth(this), ScreenUtils.getScreenHeight(this));
         float height = (int) (screenMinSize * 0.75);
         float width = (int) (height * 75.0f / 47.0f);
-        //获取底部"操作区域"的宽度
+        //Obtener el ancho del "área de operación" inferior
         float flCameraOptionWidth = (screenMaxSize - width) / 2;
         LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams((int) width, ViewGroup.LayoutParams.MATCH_PARENT);
         LinearLayout.LayoutParams cropParams = new LinearLayout.LayoutParams((int) width, (int) height);
         LinearLayout.LayoutParams cameraOptionParams = new LinearLayout.LayoutParams((int) flCameraOptionWidth, ViewGroup.LayoutParams.MATCH_PARENT);
         mLlCameraCropContainer.setLayoutParams(containerParams);
         mIvCameraCrop.setLayoutParams(cropParams);
-        //获取"相机裁剪区域"的宽度来动态设置底部"操作区域"的宽度，使"相机裁剪区域"居中
+        /*
+            Obtenga el ancho del área de recorte de la cámara para establecer dinámicamente 
+            el ancho del área de operación inferior para centrar el área de recorte de la cámara
+        */
         mFlCameraOption.setLayoutParams(cameraOptionParams);
 
         switch (mType) {
@@ -141,7 +135,11 @@ public class CameraActivity extends Activity implements View.OnClickListener {
                 break;
         }
 
-        /*增加0.5秒过渡界面，解决个别手机首次申请权限导致预览界面启动慢的问题*/
+        /*
+            Se agregó una interfaz de transición de 0.5 segundos para resolver el 
+            problema del inicio lento de la interfaz de vista previa causado por la 
+            primera aplicación de permiso del teléfono móvil individual
+        */
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -194,14 +192,14 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * 拍照
+     * Toma la foto
      */
     private void takePhoto() {
         mCameraPreview.setEnabled(false);
         CameraUtils.getCamera().setOneShotPreviewCallback(new Camera.PreviewCallback() {
             @Override
             public void onPreviewFrame(final byte[] bytes, Camera camera) {
-                final Camera.Size size = camera.getParameters().getPreviewSize(); //获取预览大小
+                final Camera.Size size = camera.getParameters().getPreviewSize(); //Obtener tamaño de vista previa
                 camera.stopPreview();
                 new Thread(new Runnable() {
                     @Override
@@ -217,33 +215,36 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * 裁剪图片
+     * Recortar fotografia
      */
     private void cropImage(Bitmap bitmap) {
-        /*计算扫描框的坐标点*/
+        /*Calcular los puntos de coordenadas del marco de escaneo*/
         float left = mViewCameraCropLeft.getWidth();
         float top = mIvCameraCrop.getTop();
         float right = mIvCameraCrop.getRight() + left;
         float bottom = mIvCameraCrop.getBottom();
 
-        /*计算扫描框坐标点占原图坐标点的比例*/
+        /*
+            Calcule la relación entre los puntos de coordenadas del 
+            marco de escaneo y los puntos de coordenadas de la imagen original
+        */
         float leftProportion = left / mCameraPreview.getWidth();
         float topProportion = top / mCameraPreview.getHeight();
         float rightProportion = right / mCameraPreview.getWidth();
         float bottomProportion = bottom / mCameraPreview.getBottom();
 
-        /*自动裁剪*/
+        /*Recorte automatico*/
         mCropBitmap = Bitmap.createBitmap(bitmap,
                 (int) (leftProportion * (float) bitmap.getWidth()),
                 (int) (topProportion * (float) bitmap.getHeight()),
                 (int) ((rightProportion - leftProportion) * (float) bitmap.getWidth()),
                 (int) ((bottomProportion - topProportion) * (float) bitmap.getHeight()));
 
-        /*设置成手动裁剪模式*/
+        /*Establecer en modo de recorte manual*/
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //将手动裁剪区域设置成与扫描框一样大
+                //Configure el área de recorte manual para que sea tan grande como el marco de escaneo
                 mCropImageView.setLayoutParams(new LinearLayout.LayoutParams(mIvCameraCrop.getWidth(), mIvCameraCrop.getHeight()));
                 setCropLayout();
                 mCropImageView.setImageBitmap(mCropBitmap);
@@ -252,7 +253,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * 设置裁剪布局
+     * Establece diseno de layout
      */
     private void setCropLayout() {
         mIvCameraCrop.setVisibility(View.GONE);
@@ -264,7 +265,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * 设置拍照布局
+     * Establecer el diseño de la foto
      */
     private void setTakePhotoLayout() {
         mIvCameraCrop.setVisibility(View.VISIBLE);
@@ -278,10 +279,10 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * 点击确认，返回图片路径
+     * Haga clic en Aceptar para volver a la ruta de la imagen
      */
     private void confirm() {
-        /*手动裁剪图片*/
+        /*Recorta la imagen manualmente*/
         mCropImageView.crop(new CropListener() {
             @Override
             public void onFinish(Bitmap bitmap) {
@@ -290,7 +291,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
                     finish();
                 }
 
-                /*保存图片到sdcard并返回图片路径*/
+                /*Guarde la imagen en la tarjeta SD y devuelva la ruta de la imagen*/
                 String imagePath = new StringBuffer().append(FileUtils.getImageCacheDir(CameraActivity.this)).append(File.separator)
                         .append(System.currentTimeMillis()).append(".jpg").toString();
                 if (ImageUtils.save(bitmap, imagePath, Bitmap.CompressFormat.JPEG)) {

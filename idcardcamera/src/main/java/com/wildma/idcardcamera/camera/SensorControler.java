@@ -10,12 +10,6 @@ import android.util.Log;
 
 import java.util.Calendar;
 
-/**
- * Author       wildma
- * Github       https://github.com/wildma
- * Date         2018/6/24
- * Desc	        ${加速度控制器，用来控制对焦}
- */
 public class SensorControler implements SensorEventListener {
     public static final String TAG = "SensorControler";
     private SensorManager mSensorManager;
@@ -25,10 +19,10 @@ public class SensorControler implements SensorEventListener {
     Calendar mCalendar;
     public static final int DELEY_DURATION = 500;
     private static SensorControler mInstance;
-    private int foucsing = 1;  //1 表示没有被锁定 0表示被锁定
+    private int foucsing = 1;  //1 Disponible  0 Bloqueado
 
     boolean isFocusing = false;
-    boolean canFocusIn = false;  //内部是否能够对焦控制机制
+    boolean canFocusIn = false;  //Si el mecanismo de control de enfoque interno
     boolean canFocus   = false;
 
     public static final int STATUS_NONE   = 0;
@@ -90,17 +84,10 @@ public class SensorControler implements SensorEventListener {
                 int px = Math.abs(mX - x);
                 int py = Math.abs(mY - y);
                 int pz = Math.abs(mZ - z);
-                //                Log.d(TAG, "pX:" + px + "  pY:" + py + "  pZ:" + pz + "    stamp:"
-                //                        + stamp + "  second:" + second);
                 double value = Math.sqrt(px * px + py * py + pz * pz);
                 if (value > 1.4) {
-                    //                    textviewF.setText("检测手机在移动..");
-                    //                    Log.i(TAG,"mobile moving");
                     STATUE = STATUS_MOVE;
                 } else {
-                    //                    textviewF.setText("检测手机静止..");
-                    //                    Log.i(TAG,"mobile static");
-                    //上一次状态是move，记录静态时间点
                     if (STATUE == STATUS_MOVE) {
                         lastStaticStamp = stamp;
                         canFocusIn = true;
@@ -108,14 +95,11 @@ public class SensorControler implements SensorEventListener {
 
                     if (canFocusIn) {
                         if (stamp - lastStaticStamp > DELEY_DURATION) {
-                            //移动后静止一段时间，可以发生对焦行为
                             if (!isFocusing) {
                                 canFocusIn = false;
-                                //                                onCameraFocus();
                                 if (mCameraFocusListener != null) {
                                     mCameraFocusListener.onFocus();
                                 }
-                                //                                Log.i(TAG,"mobile focusing");
                             }
                         }
                     }
@@ -134,7 +118,7 @@ public class SensorControler implements SensorEventListener {
     }
 
     /**
-     * 重置参数
+     * Restablecer parámetros
      */
     private void restParams() {
         STATUE = STATUS_NONE;
@@ -145,9 +129,9 @@ public class SensorControler implements SensorEventListener {
     }
 
     /**
-     * 对焦是否被锁定
+     * Si el enfoque esta bloqueado
      *
-     * @return
+     * @return true: bloqueado, false: disponible
      */
     public boolean isFocusLocked() {
         if (canFocus) {
@@ -157,7 +141,7 @@ public class SensorControler implements SensorEventListener {
     }
 
     /**
-     * 锁定对焦
+     * Bloquear el enfoque
      */
     public void lockFocus() {
         isFocusing = true;
@@ -166,7 +150,7 @@ public class SensorControler implements SensorEventListener {
     }
 
     /**
-     * 解锁对焦
+     * Desbloquear el enfoque
      */
     public void unlockFocus() {
         isFocusing = false;

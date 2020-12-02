@@ -6,20 +6,15 @@ import android.support.v4.app.Fragment;
 
 import java.lang.ref.WeakReference;
 
-/**
- * Author       wildma
- * Github       https://github.com/wildma
- * Date         2019/04/28
- * Desc	        ${身份证相机}
- */
+
 public class IDCardCamera {
 
-    public final static int    TYPE_IDCARD_FRONT     = 1;//身份证正面
-    public final static int    TYPE_IDCARD_BACK      = 2;//身份证反面
-    public final static int    RESULT_CODE           = 0X11;//结果码
-    public final static int    PERMISSION_CODE_FIRST = 0x12;//权限请求码
-    public final static String TAKE_TYPE             = "take_type";//拍摄类型标记
-    public final static String IMAGE_PATH            = "image_path";//图片路径标记
+    public final static int    TYPE_IDCARD_FRONT     = 1;//Frente de la tarjeta de identificación
+    public final static int    TYPE_IDCARD_BACK      = 2;//Reverso de la tarjeta de identificación
+    public final static int    RESULT_CODE           = 0X11;//Codigo de resultado
+    public final static int    PERMISSION_CODE_FIRST = 0x12;//Código de solicitud de permiso
+    public final static String TAKE_TYPE             = "take_type";//Marca de tipo de disparo
+    public final static String IMAGE_PATH            = "image_path";//Marca de ruta de imagen
 
     private final WeakReference<Activity> mActivity;
     private final WeakReference<Fragment> mFragment;
@@ -46,9 +41,9 @@ public class IDCardCamera {
     }
 
     /**
-     * 打开相机
+     * Encienda la camara
      *
-     * @param IDCardDirection 身份证方向（TYPE_IDCARD_FRONT / TYPE_IDCARD_BACK）
+     * @param IDCardDirection Dirección de la tarjeta de identificación（TYPE_IDCARD_FRONT / TYPE_IDCARD_BACK）
      */
     public void openCamera(int IDCardDirection) {
         Activity activity = this.mActivity.get();
@@ -63,10 +58,10 @@ public class IDCardCamera {
     }
 
     /**
-     * 获取图片路径
+     * Obtener la ruta de la imagen
      *
      * @param data Intent
-     * @return 图片路径
+     * @return Ruta de la imagen
      */
     public static String getImagePath(Intent data) {
         if (data != null) {

@@ -14,12 +14,6 @@ import com.wildma.idcardcamera.utils.ScreenUtils;
 
 import java.util.List;
 
-/**
- * Author       wildma
- * Github       https://github.com/wildma
- * Date         2018/6/24
- * Desc	        ${相机预览}
- */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
     private static String TAG = CameraPreview.class.getName();
@@ -68,26 +62,36 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
                 Camera.Parameters parameters = camera.getParameters();
                 if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    //竖屏拍照时，需要设置旋转90度，否者看到的相机预览方向和界面方向不相同
+                    /* 
+                        Al tomar fotografías en modo retrato, debe establecer una 
+                        rotación de 90 grados; de lo contrario, la dirección de vista 
+                        previa de la cámara y la dirección de la interfaz son diferentes 
+                    */
                     camera.setDisplayOrientation(90);
                     parameters.setRotation(90);
                 } else {
                     camera.setDisplayOrientation(0);
                     parameters.setRotation(0);
                 }
-                List<Camera.Size> sizeList = parameters.getSupportedPreviewSizes();//获取所有支持的预览大小
+                //Obtiene todos los tamaños de vista previa admitidos
+                List<Camera.Size> sizeList = parameters.getSupportedPreviewSizes();
                 Camera.Size bestSize = getOptimalPreviewSize(sizeList, ScreenUtils.getScreenWidth(mContext), ScreenUtils.getScreenHeight(mContext));
-                parameters.setPreviewSize(bestSize.width, bestSize.height);//设置预览大小
+                //Establece el tamaño de vista previa
+                parameters.setPreviewSize(bestSize.width, bestSize.height);
                 camera.setParameters(parameters);
                 camera.startPreview();
-                focus();//首次对焦
-                //mAutoFocusManager = new AutoFocusManager(camera);//定时对焦
+                //Enfoca por primera vez
+                focus();
             } catch (Exception e) {
                 Log.d(TAG, "Error setting camera preview: " + e.getMessage());
                 try {
                     Camera.Parameters parameters = camera.getParameters();
                     if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        //竖屏拍照时，需要设置旋转90度，否者看到的相机预览方向和界面方向不相同
+                        /**
+                            Al tomar fotografías en modo retrato, debe establecer una rotación de 90 grados; 
+                            de lo contrario, la dirección de vista previa de la cámara y la dirección de 
+                            la interfaz son diferentes
+                        */
                         camera.setDisplayOrientation(90);
                         parameters.setRotation(90);
                     } else {
@@ -96,8 +100,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                     }
                     camera.setParameters(parameters);
                     camera.startPreview();
-                    focus();//首次对焦
-                    //mAutoFocusManager = new AutoFocusManager(camera);//定时对焦
+                    //Enfócate por primera vez
+                    focus();
                 } catch (Exception e1) {
                     e.printStackTrace();
                     camera = null;
@@ -106,12 +110,17 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
+    @Override
+    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+        //Debido a que se establece una orientación de pantalla fija, este método no se activará en el uso real
+    }
+
     /**
-     * 获取最佳预览大小
+     * Obtenga el mejor tamaño de vista previa
      *
-     * @param sizes 所有支持的预览大小
-     * @param w     SurfaceView宽
-     * @param h     SurfaceView高
+     * @param sizes Todos los tamaños de vista previa admitidos
+     * @param w     SurfaceViewWidth
+     * @param h     SurfaceViewHeight
      * @return
      */
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
@@ -125,7 +134,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         int targetHeight = h;
 
-        // Try to find an size match aspect ratio and size
+        // Intente encontrar una relación de aspecto y un tamaño que coincida con el tamaño
         for (Camera.Size size : sizes) {
             double ratio = (double) size.width / size.height;
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
@@ -136,7 +145,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             }
         }
 
-        // Cannot find the one match the aspect ratio, ignore the requirement
+        //No se puede encontrar el que coincida con la relación de aspecto, ignore el requisito
         if (optimalSize == null) {
             minDiff = Double.MAX_VALUE;
             for (Camera.Size size : sizes) {
@@ -149,18 +158,16 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         return optimalSize;
     }
 
-    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-        //因为设置了固定屏幕方向，所以在实际使用中不会触发这个方法
-    }
+
 
     public void surfaceDestroyed(SurfaceHolder holder) {
         holder.removeCallback(this);
-        //回收释放资源
+        //Reciclar y liberar recursos
         release();
     }
 
     /**
-     * 释放资源
+     * Liberar recursos
      */
     private void release() {
         if (camera != null) {
@@ -177,7 +184,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     /**
-     * 对焦，在CameraActivity中触摸对焦或者自动对焦
+     * Enfoque, enfoque táctil o enfoque automático en CameraActivity
      */
     public void focus() {
         if (camera != null) {
@@ -190,9 +197,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     /**
-     * 开关闪光灯
+     * Cambiar flash
      *
-     * @return 闪光灯是否开启
+     * @return Si el flash está encendido
      */
     public boolean switchFlashLight() {
         if (camera != null) {
@@ -211,7 +218,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     /**
-     * 拍摄照片
+     * Tomando la foto
      *
      * @param pictureCallback 在pictureCallback处理拍照回调
      */
