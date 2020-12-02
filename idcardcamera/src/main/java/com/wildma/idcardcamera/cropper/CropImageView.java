@@ -13,13 +13,7 @@ import android.widget.ImageView;
 
 import com.wildma.idcardcamera.R;
 
-
-/**
- * Author       wildma
- * Github       https://github.com/wildma
- * Date         2018/6/24
- * Desc	        ${裁剪布局}
- */
+ 
 public class CropImageView extends FrameLayout {
 
     private ImageView       mImageView;
