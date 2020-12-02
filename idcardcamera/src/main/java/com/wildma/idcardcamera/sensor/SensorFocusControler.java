@@ -1,4 +1,4 @@
-package com.wildma.idcardcamera.camera;
+package com.wildma.idcardcamera.sensor;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.util.Log;
 
 import java.util.Calendar;
 
-public class SensorControler implements SensorEventListener {
+public class SensorFocusControler implements SensorEventListener {
     public static final String TAG = "SensorControler";
     private SensorManager mSensorManager;
     private Sensor        mSensor;
@@ -18,7 +18,7 @@ public class SensorControler implements SensorEventListener {
     private long lastStaticStamp = 0;
     Calendar mCalendar;
     public static final int DELEY_DURATION = 500;
-    private static SensorControler mInstance;
+    private static SensorFocusControler mInstance;
     private int foucsing = 1;  //1 Disponible  0 Bloqueado
 
     boolean isFocusing = false;
@@ -30,14 +30,14 @@ public class SensorControler implements SensorEventListener {
     public static final int STATUS_MOVE   = 2;
     private             int STATUE        = STATUS_NONE;
 
-    private SensorControler(Context context) {
+    private SensorFocusControler(Context context) {
         mSensorManager = (SensorManager) context.getSystemService(Activity.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);// TYPE_GRAVITY
     }
 
-    public static SensorControler getInstance(Context context) {
+    public static SensorFocusControler getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new SensorControler(context);
+            mInstance = new SensorFocusControler(context);
         }
         return mInstance;
     }

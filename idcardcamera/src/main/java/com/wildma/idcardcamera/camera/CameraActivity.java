@@ -25,7 +25,6 @@ import android.widget.Toast;
 import com.wildma.idcardcamera.R;
 import com.wildma.idcardcamera.cropper.CropImageView;
 import com.wildma.idcardcamera.cropper.CropListener;
-import com.wildma.idcardcamera.sensor.BubbleLevel;
 import com.wildma.idcardcamera.utils.CommonUtils;
 import com.wildma.idcardcamera.utils.FileUtils;
 import com.wildma.idcardcamera.utils.ImageUtils;
@@ -51,10 +50,6 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     private int     mType;
     private boolean isToast = true;
 
-
-    BubbleLevel bubbleLevel;
-    SensorManager sensorManager;
-    Sensor sensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,9 +159,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
                 });
             }
         }, 500);
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        bubbleLevel = new BubbleLevel(sensorManager, sensor,this);
+
 
     }
 
@@ -328,6 +321,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
             mCameraPreview.onStart();
         }
     }
+
 
     @Override
     protected void onStop() {

@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.wildma.idcardcamera.sensor.SensorFocusControler;
+import com.wildma.idcardcamera.sensor.SensorLevelControler;
 import com.wildma.idcardcamera.utils.ScreenUtils;
 
 import java.util.List;
@@ -20,9 +22,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private Camera           camera;
     private AutoFocusManager mAutoFocusManager;
-    private SensorControler  mSensorControler;
+    private SensorFocusControler mSensorFocusControler;
     private Context          mContext;
     private SurfaceHolder    mSurfaceHolder;
+
+
+    private SensorLevelControler bubbleLevel;
 
     public CameraPreview(Context context) {
         super(context);
@@ -47,11 +52,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private void init(Context context) {
         mContext = context;
+        bubbleLevel = new SensorLevelControler( context.getApplicationContext());
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
         mSurfaceHolder.setKeepScreenOn(true);
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        mSensorControler = SensorControler.getInstance(context.getApplicationContext());
+        mSensorFocusControler = SensorFocusControler.getInstance(context.getApplicationContext());
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
@@ -240,9 +246,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     public void onStart() {
         addCallback();
-        if (mSensorControler != null) {
-            mSensorControler.onStart();
-            mSensorControler.setCameraFocusListener(new SensorControler.CameraFocusListener() {
+        if (mSensorFocusControler != null) {
+
+            mSensorFocusControler.onStart();
+            mSensorFocusControler.setCameraFocusListener(new SensorFocusControler.CameraFocusListener() {
                 @Override
                 public void onFocus() {
                     focus();
@@ -252,8 +259,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void onStop() {
-        if (mSensorControler != null) {
-            mSensorControler.onStop();
+        if (mSensorFocusControler != null) {
+            mSensorFocusControler.onStop();
         }
     }
 
@@ -262,4 +269,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mSurfaceHolder.addCallback(this);
         }
     }
+
+
+
 }
