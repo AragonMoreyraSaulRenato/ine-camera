@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.wildma.idcardcamera.R;
 import com.wildma.idcardcamera.cropper.CropImageView;
 import com.wildma.idcardcamera.cropper.CropListener;
+import com.wildma.idcardcamera.sensor.SensorLevelControler;
 import com.wildma.idcardcamera.utils.CommonUtils;
 import com.wildma.idcardcamera.utils.FileUtils;
 import com.wildma.idcardcamera.utils.ImageUtils;
@@ -32,8 +33,10 @@ import com.wildma.idcardcamera.utils.PermissionUtils;
 import com.wildma.idcardcamera.utils.ScreenUtils;
 
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
-public class CameraActivity extends Activity implements View.OnClickListener {
+public class CameraActivity extends Activity implements View.OnClickListener  {
 
     private CropImageView mCropImageView;
     private Bitmap        mCropBitmap;
@@ -50,15 +53,20 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     //MODIFICA LA IMAGEN SI ES ESTABLE O NO
     public static ImageView     mIvCameraCrop;
     public static int mType;
+    private  Thread threadVerificador;
+    private Boolean threadFlag = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         boolean checkPermissionFirst = PermissionUtils.checkPermissionFirst(this, IDCardCamera.PERMISSION_CODE_FIRST,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA});
-        if (checkPermissionFirst) {
+         if (checkPermissionFirst) {
             init();
         }
+         initThread();
+
     }
 
     /**
@@ -156,8 +164,9 @@ public class CameraActivity extends Activity implements View.OnClickListener {
             }
         }, 500);
 
-
     }
+
+
 
     private void initListener() {
         mCameraPreview.setOnClickListener(this);
@@ -166,7 +175,6 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.iv_camera_take).setOnClickListener(this);
         findViewById(R.id.iv_camera_result_ok).setOnClickListener(this);
         findViewById(R.id.iv_camera_result_cancel).setOnClickListener(this);
-        iniciarHilo();
     }
 
     @Override
@@ -195,6 +203,8 @@ public class CameraActivity extends Activity implements View.OnClickListener {
             mCameraPreview.startPreview();
             mIvCameraFlash.setImageResource(R.mipmap.camera_flash_off);
             setTakePhotoLayout();
+            threadFlag=true;
+            initThread();
         }
     }
 
@@ -203,6 +213,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
      */
     private void takePhoto() {
         mCameraPreview.setEnabled(false);
+        threadFlag = false;
         CameraUtils.getCamera().setOneShotPreviewCallback(new Camera.PreviewCallback() {
             @Override
             public void onPreviewFrame(final byte[] bytes, Camera camera) {
@@ -316,23 +327,47 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         super.onStart();
         if (mCameraPreview != null) {
             mCameraPreview.onStart();
+
         }
+
     }
 
-public void iniciarHilo(){
-    new Thread(new Runnable() {
-        public void run() {
-            //Aquí ejecutamos nuestras tareas costosas
-            Log.d("CameraPreview", "esta enfocado" );
-        }
-    }).start();
-}
+
     @Override
     protected void onStop() {
         super.onStop();
+
         if (mCameraPreview != null) {
             mCameraPreview.onStop();
         }
+        try{
+            threadFlag = false;
+            Log.d("Hilo","Detenido");
+        }catch (Exception e){
+            Log.d("Hilo", e.getMessage());
+        }
+    }
+
+    private void initThread(){
+        threadVerificador = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(threadFlag){
+                    try{
+                        Thread.sleep(6000);
+
+                        if (mCameraPreview.getfocusandlevel()){
+                          takePhoto();
+                        }else{
+                            Log.d("Hilo", "No enfocado ni estabilizado");
+                        }
+                    }catch (Exception e){
+                        Log.d("Hilo", "No mms mi cubre boca");
+                    }
+                }
+            }
+        });
+        threadVerificador.start();
     }
 
 }

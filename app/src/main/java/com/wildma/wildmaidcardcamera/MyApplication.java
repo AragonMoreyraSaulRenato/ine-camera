@@ -15,8 +15,5 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> f4848e4008eb7a8d653ac875466588963594f827
 }

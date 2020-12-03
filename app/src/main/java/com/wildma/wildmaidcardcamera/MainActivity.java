@@ -10,12 +10,6 @@ import android.widget.ImageView;
 
 import com.wildma.idcardcamera.camera.IDCardCamera;
 
-/**
- * Author   wildma
- * Github   https://github.com/wildma
- * Date     2018/6/24
- * Desc     ${身份证相机使用例子}
- */
 public class MainActivity extends AppCompatActivity {
     private ImageView mIvFront;
     private ImageView mIvBack;

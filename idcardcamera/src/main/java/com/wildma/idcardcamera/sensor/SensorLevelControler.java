@@ -14,14 +14,15 @@ import com.wildma.idcardcamera.R;
 import com.wildma.idcardcamera.camera.CameraActivity;
 import com.wildma.idcardcamera.camera.IDCardCamera;
 
+import java.util.Observable;
 
-public class SensorLevelControler implements SensorEventListener{
 
-    private static SensorLevelControler mInstance;
+public class SensorLevelControler implements SensorEventListener {
+
     static private final String TAG = SensorLevelControler.class.getSimpleName();
     static private final double GRAVITY = 9.81d;
-    static private final double MIN_DEGREE = -10d;
-    static private final double MAX_DEGREE = 10d;
+    static private final double MIN_DEGREE = -8d;
+    static private final double MAX_DEGREE = 8d;
 
     private Sensor           sensor;
     private SensorManager    sensorManager;
@@ -33,7 +34,7 @@ public class SensorLevelControler implements SensorEventListener{
     private double thetaY;
 
 
-    private SensorLevelControler(Context ctx) {
+    public  SensorLevelControler(Context ctx) {
         this.mContext = ctx;
         this.sensorManager =  (SensorManager) ctx.getSystemService(Activity.SENSOR_SERVICE);
         this.sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);// TYPE_GRAVITY
@@ -46,12 +47,6 @@ public class SensorLevelControler implements SensorEventListener{
         thetaY = 0d;
     }
 
-    public static SensorLevelControler getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new SensorLevelControler(context);
-        }
-        return mInstance;
-    }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
@@ -65,15 +60,6 @@ public class SensorLevelControler implements SensorEventListener{
         thetaX = Math.toDegrees(Math.asin(gy/GRAVITY));
         thetaY = Math.toDegrees(Math.asin(gx/GRAVITY));
 
-<<<<<<< HEAD
-        if (thetaX >= MIN_DEGREE && thetaX <= MAX_DEGREE && thetaY >= MIN_DEGREE && thetaY <= MAX_DEGREE && gz > 0d) {
-            enablePhoto = true;
-            Log.i(TAG, "Camera stable");
-        } else {
-            Log.i(TAG, "Camera no stable");
-            enablePhoto = false;
-           // userMessage.setBackgroundColor(Color.RED);
-=======
 
         if(CameraActivity.mIvCameraCrop != null) {
             if (thetaX >= MIN_DEGREE && thetaX <= MAX_DEGREE && thetaY >= MIN_DEGREE && thetaY <= MAX_DEGREE && gz > 0d) {
@@ -97,7 +83,6 @@ public class SensorLevelControler implements SensorEventListener{
                         break;
                 }
             }
->>>>>>> f4848e4008eb7a8d653ac875466588963594f827
         }
     }
 
