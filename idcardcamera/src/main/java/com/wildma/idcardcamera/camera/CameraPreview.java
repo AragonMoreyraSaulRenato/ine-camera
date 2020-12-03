@@ -28,6 +28,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
 
     private SensorLevelControler bubbleLevel;
+    private Boolean enableFocus;
 
     public CameraPreview(Context context) {
         super(context);
@@ -58,6 +59,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mSurfaceHolder.setKeepScreenOn(true);
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mSensorFocusControler = SensorFocusControler.getInstance(context.getApplicationContext());
+
+        enableFocus = false;
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
@@ -200,9 +203,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                     @Override
                     public void onAutoFocus(boolean success, Camera camera) {
                         if(success) {
-                            Log.d("CameraPreview", "ya esta enfocado" );
+                            enableFocus = true;
+                            Log.d("CameraPreview", "esta enfocado" );
                            // camera.takePicture(null, null, null);
                         } else {
+                            enableFocus = false;
                             //NOT YET FOCUSED
                         }
                     }
@@ -281,6 +286,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
+    public boolean getfocusandlevel(){
+
+        return (bubbleLevel.isCameraEnabled() && enableFocus) ;
+    }
 
 
 }

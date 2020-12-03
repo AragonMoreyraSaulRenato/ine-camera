@@ -49,8 +49,6 @@ public class CameraActivity extends Activity implements View.OnClickListener {
 
     private int     mType;
     private boolean isToast = true;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,6 +164,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.iv_camera_take).setOnClickListener(this);
         findViewById(R.id.iv_camera_result_ok).setOnClickListener(this);
         findViewById(R.id.iv_camera_result_cancel).setOnClickListener(this);
+        iniciarHilo();
     }
 
     @Override
@@ -318,7 +317,14 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         }
     }
 
-
+public void iniciarHilo(){
+    new Thread(new Runnable() {
+        public void run() {
+            //Aquí ejecutamos nuestras tareas costosas
+            Log.d("CameraPreview", "esta enfocado" );
+        }
+    }).start();
+}
     @Override
     protected void onStop() {
         super.onStop();
@@ -326,4 +332,5 @@ public class CameraActivity extends Activity implements View.OnClickListener {
             mCameraPreview.onStop();
         }
     }
+
 }

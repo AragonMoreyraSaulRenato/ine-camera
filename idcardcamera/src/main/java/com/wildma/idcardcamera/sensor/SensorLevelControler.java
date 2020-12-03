@@ -21,7 +21,6 @@ public class SensorLevelControler implements SensorEventListener{
     private SensorManager           sensorManager;
 
     private Boolean enablePhoto;
-    private Boolean tonePlayed;
     private double thetaX;
     private double thetaY;
 
@@ -31,7 +30,6 @@ public class SensorLevelControler implements SensorEventListener{
         this.sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);// TYPE_GRAVITY
         sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         enablePhoto = false;
-        tonePlayed = false;
         thetaX = 0d;
         thetaY = 0d;
 
@@ -49,8 +47,6 @@ public class SensorLevelControler implements SensorEventListener{
         thetaX = Math.toDegrees(Math.asin(gy/GRAVITY));
         thetaY = Math.toDegrees(Math.asin(gx/GRAVITY));
 
-
-
         if (thetaX >= MIN_DEGREE && thetaX <= MAX_DEGREE && thetaY >= MIN_DEGREE && thetaY <= MAX_DEGREE && gz > 0d) {
             enablePhoto = true;
             Log.i(TAG, "Camera stable");
@@ -58,11 +54,6 @@ public class SensorLevelControler implements SensorEventListener{
             Log.i(TAG, "Camera no stable");
             enablePhoto = false;
            // userMessage.setBackgroundColor(Color.RED);
-            if (thetaY > 0) {
-               // userMessage.setText(R.string.phone_up);
-            } else {
-              //  userMessage.setText(R.string.phone_down);
-            }
         }
 
     }
