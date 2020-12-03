@@ -11,7 +11,7 @@ import android.util.Log;
 import java.util.Calendar;
 
 public class SensorFocusControler implements SensorEventListener {
-    public static final String TAG = "SensorControler";
+    public static final String TAG = SensorFocusControler.class.getName();
     private SensorManager mSensorManager;
     private Sensor        mSensor;
     private int           mX, mY, mZ;

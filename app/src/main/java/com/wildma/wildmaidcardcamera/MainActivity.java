@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == IDCardCamera.RESULT_CODE) {
-            //获取图片路径，显示图片
             final String path = IDCardCamera.getImagePath(data);
             if (!TextUtils.isEmpty(path)) {
                 if (requestCode == IDCardCamera.TYPE_IDCARD_FRONT) { //身份证正面
