@@ -39,22 +39,21 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     private Bitmap        mCropBitmap;
     private CameraPreview mCameraPreview;
     private View          mLlCameraCropContainer;
-    private ImageView     mIvCameraCrop;
     private ImageView     mIvCameraFlash;
     private View          mLlCameraOption;
     private View          mLlCameraResult;
     private TextView      mViewCameraCropBottom;
     private FrameLayout   mFlCameraOption;
     private View          mViewCameraCropLeft;
-
-    private int     mType;
     private boolean isToast = true;
 
+    //MODIFICA LA IMAGEN SI ES ESTABLE O NO
+    public static ImageView     mIvCameraCrop;
+    public static int mType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         boolean checkPermissionFirst = PermissionUtils.checkPermissionFirst(this, IDCardCamera.PERMISSION_CODE_FIRST,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA});
         if (checkPermissionFirst) {
@@ -114,9 +113,6 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         mViewCameraCropLeft = findViewById(R.id.view_camera_crop_left);
 
 
-
-
-
         float screenMinSize = Math.min(ScreenUtils.getScreenWidth(this), ScreenUtils.getScreenHeight(this));
         float screenMaxSize = Math.max(ScreenUtils.getScreenWidth(this), ScreenUtils.getScreenHeight(this));
         float height = (int) (screenMinSize * 0.75);
@@ -134,6 +130,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         */
         mFlCameraOption.setLayoutParams(cameraOptionParams);
 
+        Log.d("CameraActivity", mType + "");
         switch (mType) {
             case IDCardCamera.TYPE_IDCARD_FRONT:
                 mIvCameraCrop.setImageResource(R.mipmap.camera_idcard_front);

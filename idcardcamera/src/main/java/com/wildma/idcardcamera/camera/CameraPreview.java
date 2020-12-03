@@ -22,12 +22,14 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private Camera           camera;
     private AutoFocusManager mAutoFocusManager;
+
+    private SensorLevelControler mSensorLevelControler;
     private SensorFocusControler mSensorFocusControler;
-    private Context          mContext;
+
     private SurfaceHolder    mSurfaceHolder;
+    private Context          mContext;
 
 
-    private SensorLevelControler bubbleLevel;
 
     public CameraPreview(Context context) {
         super(context);
@@ -52,11 +54,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private void init(Context context) {
         mContext = context;
-        bubbleLevel = new SensorLevelControler( context.getApplicationContext());
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
         mSurfaceHolder.setKeepScreenOn(true);
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        mSensorLevelControler = SensorLevelControler.getInstance(context.getApplicationContext());
         mSensorFocusControler = SensorFocusControler.getInstance(context.getApplicationContext());
     }
 
@@ -168,7 +170,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     public void surfaceDestroyed(SurfaceHolder holder) {
         holder.removeCallback(this);
-        //Reciclar y liberar recursos
         release();
     }
 
@@ -247,7 +248,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public void onStart() {
         addCallback();
         if (mSensorFocusControler != null) {
-
             mSensorFocusControler.onStart();
             mSensorFocusControler.setCameraFocusListener(new SensorFocusControler.CameraFocusListener() {
                 @Override
@@ -256,11 +256,19 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 }
             });
         }
+
+        if(mSensorLevelControler != null){
+            mSensorLevelControler.onStart();
+        }
     }
 
     public void onStop() {
         if (mSensorFocusControler != null) {
             mSensorFocusControler.onStop();
+        }
+
+        if (mSensorLevelControler != null) {
+            mSensorLevelControler.onStop();
         }
     }
 

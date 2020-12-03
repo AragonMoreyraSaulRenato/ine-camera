@@ -8,33 +8,49 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
+import android.widget.ImageView;
+
+import com.wildma.idcardcamera.R;
+import com.wildma.idcardcamera.camera.CameraActivity;
+import com.wildma.idcardcamera.camera.IDCardCamera;
 
 
 public class SensorLevelControler implements SensorEventListener{
 
-    static private final String TAG = "BubbleLevel";
+    private static SensorLevelControler mInstance;
+    static private final String TAG = SensorLevelControler.class.getSimpleName();
     static private final double GRAVITY = 9.81d;
-    static private final double MIN_DEGREE = -20d;
-    static private final double MAX_DEGREE = 20d;
+    static private final double MIN_DEGREE = -10d;
+    static private final double MAX_DEGREE = 10d;
 
-    private Sensor                  sensor;
-    private SensorManager           sensorManager;
+    private Sensor           sensor;
+    private SensorManager    sensorManager;
+    private Context          mContext;
+
 
     private Boolean enablePhoto;
-    private Boolean tonePlayed;
     private double thetaX;
     private double thetaY;
 
 
-    public SensorLevelControler(Context ctx) {
+    private SensorLevelControler(Context ctx) {
+        this.mContext = ctx;
         this.sensorManager =  (SensorManager) ctx.getSystemService(Activity.SENSOR_SERVICE);
         this.sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);// TYPE_GRAVITY
         sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    public void restParams(){
         enablePhoto = false;
-        tonePlayed = false;
         thetaX = 0d;
         thetaY = 0d;
+    }
 
+    public static SensorLevelControler getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new SensorLevelControler(context);
+        }
+        return mInstance;
     }
 
     @Override
@@ -50,28 +66,45 @@ public class SensorLevelControler implements SensorEventListener{
         thetaY = Math.toDegrees(Math.asin(gx/GRAVITY));
 
 
-
-        if (thetaX >= MIN_DEGREE && thetaX <= MAX_DEGREE && thetaY >= MIN_DEGREE && thetaY <= MAX_DEGREE && gz > 0d) {
-            enablePhoto = true;
-            Log.i(TAG, "Camera stable");
-        } else {
-            Log.i(TAG, "Camera no stable");
-            enablePhoto = false;
-            tonePlayed = false;
-           // userMessage.setBackgroundColor(Color.RED);
-
-            if (thetaY > 0) {
-               // userMessage.setText(R.string.phone_up);
+        if(CameraActivity.mIvCameraCrop != null) {
+            if (thetaX >= MIN_DEGREE && thetaX <= MAX_DEGREE && thetaY >= MIN_DEGREE && thetaY <= MAX_DEGREE && gz > 0d) {
+                enablePhoto = true;
+                switch (CameraActivity.mType) {
+                    case IDCardCamera.TYPE_IDCARD_FRONT:
+                        CameraActivity.mIvCameraCrop .setImageResource(R.mipmap.camera_idcard_front_ok);
+                        break;
+                    case IDCardCamera.TYPE_IDCARD_BACK:
+                        CameraActivity.mIvCameraCrop .setImageResource(R.mipmap.camera_idcard_back_ok);
+                        break;
+                }
             } else {
-              //  userMessage.setText(R.string.phone_down);
+                enablePhoto = false;
+                switch (CameraActivity.mType) {
+                    case IDCardCamera.TYPE_IDCARD_FRONT:
+                        CameraActivity.mIvCameraCrop .setImageResource(R.mipmap.camera_idcard_front);
+                        break;
+                    case IDCardCamera.TYPE_IDCARD_BACK:
+                        CameraActivity.mIvCameraCrop .setImageResource(R.mipmap.camera_idcard_back);
+                        break;
+                }
             }
         }
-
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
+    }
+
+    public void onStart() {
+        enablePhoto = false;
+        sensorManager.registerListener(this, sensor,
+                SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    public void onStop() {
+        sensorManager.unregisterListener(this, sensor);
+        enablePhoto = false;
     }
 
     public Boolean isCameraEnabled() {
