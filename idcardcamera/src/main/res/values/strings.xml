@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IDCardCamera</string>
+    <string name="app_name">Lib_Forjadores_IDCamara</string>
 
     <string name="touch_to_focus">Toca la pantalla para enfocar</string>
     <string name="crop_fail">Recorte fallido</string>

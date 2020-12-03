@@ -23,14 +23,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 身份证正面
+     * Frente de la tarjeta de identificación
      */
     public void front(View view) {
         IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_FRONT);
     }
 
     /**
-     * 身份证反面
+     * Reverso de la tarjeta de identificación
      */
     public void back(View view) {
         IDCardCamera.create(this).openCamera(IDCardCamera.TYPE_IDCARD_BACK);
@@ -41,14 +41,16 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == IDCardCamera.RESULT_CODE) {
             final String path = IDCardCamera.getImagePath(data);
             if (!TextUtils.isEmpty(path)) {
-                if (requestCode == IDCardCamera.TYPE_IDCARD_FRONT) { //身份证正面
+                if (requestCode == IDCardCamera.TYPE_IDCARD_FRONT) {
                     mIvFront.setImageBitmap(BitmapFactory.decodeFile(path));
-                } else if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) {  //身份证反面
+                } else if (requestCode == IDCardCamera.TYPE_IDCARD_BACK) {
                     mIvBack.setImageBitmap(BitmapFactory.decodeFile(path));
                 }
 
-                //实际开发中将图片上传到服务器成功后需要删除全部缓存图片
-//                FileUtils.clearCache(this);
+                //En el desarrollo real, debe eliminar todas las imágenes
+                // almacenadas en caché después de cargar las imágenes en el
+                // servidor con éxito
+               // FileUtils.clearCache(this);
             }
         }
     }
