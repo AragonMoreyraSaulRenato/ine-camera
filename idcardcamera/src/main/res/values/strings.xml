@@ -1,20 +1,6 @@
 <resources>
     <string name="app_name">Lib_Forjadores_IDCamara</string>
-
     <string name="touch_to_focus">Toca la pantalla para enfocar</string>
     <string name="crop_fail">Recorte fallido</string>
     <string name="no_flash">Dispositivo no tiene flash</string>
-
-
-    <!-- Toast Messages -->
-    <string name="camera_not_found">Hardware da câmera não encontrado</string>
-    <string name="take_photo_help">Toque na tela para tirar uma foto.</string>
-    <string name="photo_taken">Foto retirada com sucesso! Salvo como %s</string>
-    <string name="photo_unauthorized">AJUSTE A ORIENTAÇÃO DO TELEFONE PARA FOTOGRAFAR!</string>
-
-    <string name="phone_up">AJUSTE INCLINAÇÃO DA CÂMERA. VEJA GUIAS AMARELAS</string>
-    <string name="phone_down">AJUSTE INCLINAÇÃO DA CÂMERA. VEJA GUIAS AMARELAS</string>
-    <string name="photo_authorized">CAMERA OK!</string>
-
-
 </resources>

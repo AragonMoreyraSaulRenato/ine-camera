@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/color_000000">
 
-    <!--相机预览-->
+    <!--Vista previa de la cámara-->
     <com.wildma.idcardcamera.camera.CameraPreview
         android:id="@+id/camera_preview"
         android:visibility="gone"
@@ -16,14 +16,14 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <!--左侧相机预览布局-->
+        <!--Diseño de vista previa de la cámara a la izquierda-->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <!--相机裁剪区域左边-->
+            <!--Izquierda del área de recorte de la cámara-->
             <View
                 android:id="@+id/view_camera_crop_left"
                 android:layout_width="0dp"
@@ -37,7 +37,7 @@
                 android:layout_height="0dp"
                 android:orientation="vertical">
 
-                <!--相机裁剪区域顶部-->
+                <!--Parte superior del área de recorte de la cámara-->
                 <View
                     android:id="@+id/view_camera_crop_top"
                     android:layout_width="match_parent"
@@ -45,21 +45,21 @@
                     android:layout_weight="1"
                     android:background="@color/preview_mock" />
 
-                <!--相机裁剪区域-->
+                <!--Área de recorte de la cámara-->
                 <ImageView
                     android:id="@+id/iv_camera_crop"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:scaleType="fitXY" />
 
-                <!--手动裁剪区域-->
+                <!--Área de layout imagen estable o no-->
                 <com.wildma.idcardcamera.cropper.CropImageView
                     android:visibility="gone"
                     android:id="@+id/crop_image_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-                <!--相机裁剪区域底部-->
+                <!--Parte inferior del área de recorte de la cámara-->
                 <TextView
                     android:id="@+id/view_camera_crop_bottom"
                     android:layout_width="match_parent"
@@ -75,14 +75,14 @@
 
         </LinearLayout>
 
-        <!--右侧操作布局-->
+        <!--Acciones para tomar foto o cortar-->
         <FrameLayout
             android:id="@+id/fl_camera_option"
             android:layout_width="136dp"
             android:layout_height="match_parent"
             android:background="@color/preview_mock">
 
-            <!--拍照前操作布局-->
+            <!--Opciones cancelar, tomar foto, flash-->
             <LinearLayout
                 android:id="@+id/ll_camera_option"
                 android:layout_width="match_parent"
@@ -111,7 +111,7 @@
 
             </LinearLayout>
 
-            <!--拍照后操作布局-->
+            <!--Opciones despues de cortar, ok o cancelar-->
             <LinearLayout
                 android:id="@+id/ll_camera_result"
                 android:layout_width="match_parent"
